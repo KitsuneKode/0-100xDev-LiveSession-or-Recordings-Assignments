@@ -27,7 +27,7 @@ Here are the screenshots of the sum and interest:
 
 ## Author
 
-![KitsuneKode](https://github.com/KitsuneKode)
+[KitsuneKode](https://github.com/KitsuneKode)
 
 ## License
 
