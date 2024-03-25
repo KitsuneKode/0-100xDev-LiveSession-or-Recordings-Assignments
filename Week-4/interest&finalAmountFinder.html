@@ -1,0 +1,40 @@
+<!-- This HTML document collects Principal, Rate, and Time from the user, calculates the total and interest, and displays the results. -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+    let timerCount;
+    function debounceCalculator(){
+        clearTimeout(timerCount);
+        timerCount = setTimeout(()=> {calculateInterest()}, 200)
+    }
+
+    async function calculateInterest(){
+        const Principal = parseInt(document.getElementById("Principal").value);
+        const Rate = parseInt(document.getElementById("Rate").value);
+        const Time = parseInt(document.getElementById("Time").value);
+        const element = document.getElementById("Result");
+
+        // const response = await fetch(`https://sum-server.100xdevs.com/interest?principal=${Principal}&rate=${Rate}&time=${Time}`);          //Harkirats server
+        const response = await fetch(`http://localhost:3000/interestCalculator?principal=${Principal}&rate=${Rate}&time=${Time}`);          //Personal server
+        const object = await response.json();
+
+        console.log(object)
+        
+        element.innerHTML= "Total is "+ object.total +"<br><br>Interest is "+ object.interest;
+    }
+</script>
+<body>
+    <div>Input the Principal Amount and Interest Rate and Duration in Years</div>
+    <input id="Principal" onclick="debounceCalculator()" type="text" placeholder="Principal" style="color: black;"><br><br>
+    <input id ="Rate" onclick="debounceCalculator()" type="text" placeholder="Rate" style="color: black;""><br><br>
+    <input id ="Time" onclick="debounceCalculator()" type="text" placeholder="Time" style="color: black;""> <br><br>
+    <div id="Result">Results with be displayed here</div>
+</body>
+</html>

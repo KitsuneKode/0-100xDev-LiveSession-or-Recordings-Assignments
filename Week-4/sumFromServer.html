@@ -1,0 +1,29 @@
+ <!-- This HTML document contains a script that retrieves two values from the page, sends their sum to a server, and displays the response. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dom Manipulation</title>
+</head>
+
+<script>
+   async function calculateSum(){
+        const a = parseInt(document.getElementById("firstNum").value);
+        const b = parseInt(document.getElementById("secondNum").value);
+        const element = document.getElementById("finalSum");
+
+        const response = await fetch(`https://sum-server.100xdevs.com/sum?a=${a}&b=${b}`);
+        const textAns = await response.text();
+        element.innerHTML = 'Result is ' + textAns;
+        
+    }
+</script>
+<body>
+    <input id ="firstNum"type ="text" placeholder="First number", style="color: black;"></input><br><br>
+    <input id ="secondNum"type ="text" placeholder="Second number", style="color: black;"></input><br><br>
+    <button onclick="calculateSum()" style="color: black;">Sum</button><br><br>
+    <div id ="finalSum">Results</div>
+</body>
+</html>
