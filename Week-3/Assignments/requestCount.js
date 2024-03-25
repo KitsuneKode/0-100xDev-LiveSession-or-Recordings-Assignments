@@ -1,8 +1,7 @@
 /**
  * Counts the number of requests in an array.
  *
- * @param {Array} requests - The array of requests.
- * @returns {number} The number of requests.
+ 
  */
 
 
