@@ -1,0 +1,152 @@
+
+<!--
+  This is a Todo App HTML file.
+  It contains functionality to add, remove, and update todos.
+  The todos are fetched from an API and displayed on the page.
+-->
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App</title>
+
+</head>
+<script>
+  // Global variables
+  let globalId = 100;
+  let todoState = [];
+  let oldTodoState = [];
+
+  // Function to remove a todo
+  function removeTodo(todo) {
+    const element = document.getElementById(todo.id);
+    element.parent.removeChild(element);
+  }
+
+  // Function to update a todo
+  function updateTodo(oldTodo, newTodo) {
+    const element = document.getElementById(oldTodo.id);
+    element.children[0].innerHTML = newTodo.title;
+    element.children[1].innerHTML = newTodo.description;
+    element.children[0].innerHTML = newTodo.completed ? "Mark as done" : "Done";
+  }
+
+  // Function to update the state of todos
+  function updateState(newTodos) {
+    // calculate the diff b/w newTodos and oldTodos.
+    // More specifically, find out what todos are - 
+    // 1. added
+    // 2. deleted
+    // 3. updated
+    const added = [];
+    const deleted = [];
+    const updated = [];
+    // calculate these 3 arrays
+    // call addTodo, removeTodo, updateTodo functions on each of the
+    // elements
+
+    newTodos.forEach(newTodo => {
+      const oldTodo = oldTodoState.find(todo => todo.id === newTodo.id);
+      if (!oldTodo) {
+        added.push(newTodo);
+      } else if (oldTodo.title !== newTodo.title || oldTodo.description !== newTodo.description || oldTodo.completed !== newTodo.completed) {
+        updated.push({ oldTodo, newTodo });
+      }
+    });
+
+    oldTodoState.forEach(oldTodo => {
+      const newTodo = newTodos.find(todo => todo.id === oldTodo.id);
+      if (!newTodo) {
+        deleted.push(oldTodo);
+      }
+    });
+
+    // added.forEach(todo => addTodo(todo));
+    // deleted.forEach(todo => removeTodo(todo));
+    // updated.forEach(({ oldTodo, newTodo }) => updateTodo(oldTodo, newTodo));
+
+    oldTodoState = newTodos;
+  }
+
+  // Function to change the status of a todo
+  function changeStatus(id) {
+    const parent = document.getElementById(id);
+    parent.children[2].innerHTML = "Done!";
+  }
+
+  // Function to create a todo element
+  function createChild(title, description, id) {
+    const outerChild = document.createElement("div");
+    const child1 = document.createElement("div");
+    child1.innerHTML = title;
+    child1.setAttribute("style", "padding:10px 5px 5px 5px")
+    const child2 = document.createElement("div");
+    child2.innerHTML = description;
+    child2.setAttribute("style", "padding:5px 10px 5px 5px")
+
+    const button = document.createElement("button");
+    button.innerHTML = "Mark as completed"
+    button.setAttribute("style", "color: black;")
+    button.setAttribute("onClick", `changeStatus(${id})`)
+
+    outerChild.appendChild(child1);
+    outerChild.appendChild(child2);
+    outerChild.appendChild(button);
+    outerChild.setAttribute("id", id);
+
+    return outerChild;
+  }
+
+  // Function to add a todo
+  function addTodo() {
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+    const todos = document.getElementById("todos");
+    todoState.push({
+      title: title,
+      description: description,
+      id: globalId++,
+    })
+
+    updateState(todoState);
+    todos.appendChild(createChild(title, description, globalId++));
+  }
+
+</script>
+
+<body>
+  <!-- Input fields and button to add a todo -->
+  <input type="text" id="title" placeholder="Todo title"></input> <br /><br />
+  <input type="text" id="description" placeholder="Todo description"></input> <br /><br />
+  <button onclick="addTodo()">Add todo</button>
+  <br /> <br />
+
+  <div id="todos">
+    Todos will be here
+  </div>
+
+  <script>
+    // Function to fetch todos from an API
+    async function fetchTodos() {
+      const res = await fetch("https://sum-server.100xdevs.com/todos");
+      const object = await res.json();
+      todoState = object.todos;
+
+      updateState(todoState);
+      const parent = document.getElementById("todos");
+      todoState.forEach((element, index) => {
+        const child = createChild(todoState[index].title, todoState[index].description, todoState[index].id);
+        parent.appendChild(child);
+      });
+
+    }
+
+    // Fetch todos when the page loads
+    fetchTodos();
+    
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!-- 
+    This is a Todo App HTML file.
+    It allows users to add, mark as completed, and update todo items.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+</head>
+
+<body>
+    <!-- Input fields for title and description -->
+    <input id="title" type="text" placeholder="title" style="color: black;"><br><br>
+    <input id="description" type="text" placeholder="description" style="color: black;"><br><br>
+    
+    <!-- Button to add a new todo item -->
+    <button onclick="addTodo()" style="color: black;">Add Todo</button>
+    
+    <!-- Container to display the todo items -->
+    <div id="container" style="padding: 10px 5px 2px 5px;">Todos will be below</div>
+
+    <script>
+        // Global variable to keep track of the unique ID for each todo item
+        let globalID = 0;
+    
+        /**
+         * Function to change the status of a todo item to "Completed!"
+         * @param {number} id - The ID of the todo item
+         */
+        function changeStatus(id){
+            const parent = document.getElementById(id);
+            parent.children[5].innerHTML = "Completed!";
+        }
+    
+        /**
+         * Function to create a new todo item with the given title, description, and ID
+         * @param {string} title - The title of the todo item
+         * @param {string} description - The description of the todo item
+         * @param {number} id - The ID of the todo item
+         * @returns {HTMLElement} - The created todo item element
+         */
+        function createChild(title, description, id){
+            const outerChild = document.createElement("div");
+            const child1 = document.createElement("div");
+            child1.innerHTML = title ;
+            child1.setAttribute("style", "padding:10px 5px 5px 5px")
+            const child2 = document.createElement("div");
+            child2.innerHTML = description;
+            child2.setAttribute("style", "padding:5px 10px 5px 5px")
+            const child3 = document.createElement("input");
+            child3.setAttribute("type", "checkbox");
+            const label = document.createElement("label");
+            label.innerHTML = "Status";
+            const brk = document.createElement("br");
+    
+            const button = document.createElement("button");
+            button.innerHTML = "Mark as completed"
+            button.setAttribute("style", "color: black;")
+            button.setAttribute("onClick", `changeStatus(${id})`)
+            
+            outerChild.appendChild(child1);
+            outerChild.appendChild(child2);
+            outerChild.appendChild(child3);
+            outerChild.appendChild(label);
+            outerChild.appendChild(brk);
+            outerChild.appendChild(button);
+            outerChild.setAttribute("id", id);
+    
+            return outerChild;
+        }  
+    
+        /**
+         * Function to add a new todo item to the container
+         */
+        function addTodo(){
+            const title = document.getElementById("title").value;
+            const description = document.getElementById("description").value;
+            const container = document.getElementById("container");
+           
+            container.appendChild(createChild(title, description, globalID++));
+        }
+
+        /**
+         * Function to update the DOM with the current state of todo items
+         * @param {Array} state - The current state of todo items
+         */
+        function updateDomAccState(state){
+            const parent = document.getElementById("container");
+            parent.innerHTML =""
+
+            state.forEach((element,index) => {
+                const child = createChild(state[index].title, state[index].description, state[index].id);
+                parent.appendChild(child); 
+            });
+        }
+
+        // Fetch the todo items from the server every 5 seconds and update the DOM
+        window.setInterval(async function(){
+            const res = await fetch("https://sum-server.100xdevs.com/todos");
+            const object = await res.json();
+            updateDomAccState(object.todos);
+        }, 5000)
+    </script>
+</body>
+</html>
