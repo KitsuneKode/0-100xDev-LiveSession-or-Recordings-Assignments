@@ -63,11 +63,24 @@
       }
     });
 
-    // added.forEach(todo => addTodo(todo));
-    // deleted.forEach(todo => removeTodo(todo));
-    // updated.forEach(({ oldTodo, newTodo }) => updateTodo(oldTodo, newTodo));
+    added.forEach(todo => addTodo(todo));
+    deleted.forEach(todo => removeTodo(todo));
+    updated.forEach(({ oldTodo, newTodo }) => updateTodo(oldTodo, newTodo));
 
-    oldTodoState = newTodos;
+    oldTodoState = [...newTodos]; 
+
+// oldTodoState = newTodos;                                         Here there is a big problem =>
+/*In JavaScript, arrays and objects are reference types. This means that when you assign an array or object to another variable, you're actually assigning a reference to the original array or object, not creating a new copy.
+
+So, when you do something like this:
+let oldTodoState = todoState;
+
+You're not creating a new array oldTodoState with the same values as todoState. Instead, you're creating a new reference oldTodoState that points to the same array as todoState. Any changes you make to todoState will be reflected in oldTodoState, and vice versa, because they're both referencing the same underlying array.
+If you want to create a new array that has the same values but doesn't reference the same array, you need to create a copy of the array. You can do this using the spread operator (...), like this:
+let oldTodoState = [...todoState];
+
+Now, oldTodoState is a new array with the same values as todoState, but it doesn't reference the same array. Changes to todoState will not affect oldTodoState, and vice versa.*/
+
   }
 
   // Function to change the status of a todo
